@@ -19,3 +19,8 @@ class LoginView(generic.FormView):
             login(self.request, user)
             return redirect("base:home")
         return super().form_valid(form)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("base:home")
