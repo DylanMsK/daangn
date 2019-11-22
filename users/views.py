@@ -24,3 +24,16 @@ class LoginView(generic.FormView):
 def logout_view(request):
     logout(request)
     return redirect("base:home")
+
+
+class SignUpView(generic.FormView):
+    template_name = "users/signup.html"
+    form_class = forms.SignUpForm
+    success_url = reverse_lazy("base:home")
+
+    def form_valid(self, form):
+        form.save()
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
+        authenticate(self.request, username=email, password=password)
+        return super().form_valid(form)
