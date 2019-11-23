@@ -18,6 +18,7 @@ class ProductAdmin(admin.ModelAdmin):
         "user",
         "title",
         "price",
+        "count_images",
     )
     ordering = ("created",)
     list_filter = ("price",)
@@ -33,13 +34,25 @@ class ProductAdmin(admin.ModelAdmin):
     def count_images(self, obj):
         return obj.images.count()
 
+    count_images.short_description = "이미지 갯수"
+
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
 
     """ Category Admin Definition """
 
-    list_display = ("name",)
+    list_display = (
+        "name",
+        "count_category",
+    )
+    search_fields = ("name",)
+    list_filter = ("name",)
+
+    def count_category(self, obj):
+        return obj.products.count()
+
+    count_category.short_description = "상품 갯수"
 
 
 @admin.register(models.Image)
@@ -50,6 +63,10 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = (
         "get_thumbnail",
         "created",
+    )
+    search_fields = (
+        "products__user__username",
+        "products__user__name",
     )
 
     def get_thumbnail(self, obj):
