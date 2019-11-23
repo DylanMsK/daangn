@@ -34,7 +34,13 @@ class LoginForm(forms.Form):
 
 
 class SignUpForm(forms.Form):
-    name = forms.CharField(label="이름")
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "id": "inputName", "placeholder": "이름 입력"}
+        ),
+        label="이름(선택)",
+        required=True,
+    )
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={"class": "form-control", "id": "inputEmail", "placeholder": "이메일 입력"}

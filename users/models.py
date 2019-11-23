@@ -18,5 +18,7 @@ class User(AbstractUser):
     last_login(datetime): 사용자의 최종 로그인 날짜
     """
 
-    name: str = models.CharField("이름", max_length=72, null=False)
+    name: str = models.CharField(
+        "이름", max_length=72, null=False, blank=True, default=""
+    )
     email: str = models.EmailField("이메일", null=False)
