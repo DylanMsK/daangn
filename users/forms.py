@@ -3,8 +3,22 @@ from users import models
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label="이메일")
-    password = forms.CharField(widget=forms.PasswordInput, label="비밀번호")
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "id": "inputEmail", "placeholder": "이메일 입력"}
+        ),
+        label="이메일",
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "id": "inputPassword",
+                "placeholder": "비밀번호 입력",
+            }
+        ),
+        label="비밀번호",
+    )
 
     def clean(self):
         email = self.cleaned_data.get("email")
@@ -21,9 +35,32 @@ class LoginForm(forms.Form):
 
 class SignUpForm(forms.Form):
     name = forms.CharField(label="이름")
-    email = forms.EmailField(label="이메일")
-    password = forms.CharField(widget=forms.PasswordInput, label="비밀번호")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="비밀번호 확인")
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "id": "inputEmail", "placeholder": "이메일 입력"}
+        ),
+        label="이메일",
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "id": "inputPassword",
+                "placeholder": "비밀번호 입력",
+            }
+        ),
+        label="비밀번호",
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "id": "confirmPassword",
+                "placeholder": "비밀번호 확인하기",
+            }
+        ),
+        label="비밀번호 확인",
+    )
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
