@@ -14,7 +14,6 @@ class CustomUserAdmin(UserAdmin):
     관리자 페이지에서 보여지는 사용자 페이지를 커스터마이징한다.
     """
 
-    fieldsets = UserAdmin.fieldsets + (("Custom Profile", {"fields": ("name",)},),)
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (_("Personal info"), {"fields": ("name", "email")}),
