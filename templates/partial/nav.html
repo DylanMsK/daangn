@@ -1,0 +1,20 @@
+<nav class="navbar nav-global fixed-top navbar-expand-sm">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'base:home' %}">
+      <img class="img-brand" alt="당근마켓" width="132"
+        src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/logo-basic-00b7e471b721ce9db8b0758c05a84684413c8aef1ad54caa0f3fcbe7328c947f.svg">
+    </a>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a href="#"><i class="material-icons ic-create">create</i></a>
+      </li>
+      <li class="nav-item">
+        {% if user.is_authenticated %}
+        <a href="{% url 'users:logout' %}">로그아웃</a>
+        {% else %}
+        <a href="{% url 'users:login' %}">로그인</a>
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+</nav>
