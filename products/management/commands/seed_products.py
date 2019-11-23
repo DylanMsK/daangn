@@ -45,7 +45,7 @@ class Command(BaseCommand):
         for pk in products:
             product = product_models.Product.objects.get(pk=pk)
             product_models.Image.objects.create(
-                product=product, image=f"/seed_cars/{random.randint(1, 31)}.jpg",
+                product=product, image=f"/product_images/{random.randint(1, 31)}.jpg",
             )
 
         self.stdout.write(self.style.SUCCESS(f"{number}개의 상품이 생성되었습니다!"))
