@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}당근마켓 - 로그인{% endblock title %}
+
+{% block content %}
+<div class="container container-sm container-sign">
+  <form class="form-sign" method='post' action='{% url 'users:login' %}'>
+    {% csrf_token %}
+    <h5 class="form-headline">🥕 로그인 🐰</h5>
+    {% for field in form %}
+    <div class="form-group">
+      {{ field }}
+    </div>
+    {% endfor %}
+    <button class="btn btn-block btn-primary">로그인 하기</button>
+    <a href="{% url 'users:signup' %}" class="btn btn-block btn-light">계정 만들기</a>
+
+    <h6 class="txt-terms">
+      <a href="#">이용약관</a> 및 <a href="#">개인정보</a> 취급방침
+    </h6>
+  </form>
+</div>
+{% endblock content %}
