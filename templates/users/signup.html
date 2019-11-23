@@ -1,11 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}회원가입 | {% endblock title %}
+{% block title %}당근마켓 - 시작하기{% endblock title %}
 
 {% block content %}
-<form action="{% url 'users:signup' %}" method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button>회원가입</button>
-</form>
+<div class="container container-sm container-sign">
+  <form class="form-sign" action="{% url 'users:signup' %}" method="post">
+    {% csrf_token %}
+    <h5 class="form-headline">🍲 계정 만들기 🐇</h5>
+    {{ form.name }}
+    {{ form.email }}
+    {{ form.password }}
+    {{ form.confirm_password }}
+    <button class="btn btn-block btn-primary">동의하고 시작하기</button>
+    <a href="{% url 'users:login' %}" class="btn btn-block btn-light">로그인</a>
+
+    <h6 class="txt-terms"><a href="#">이용약관</a> 및 <a href="#">개인정보</a>취급방침</h6>
+  </form>
+</div>
 {% endblock content %}
