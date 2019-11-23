@@ -7,10 +7,10 @@
   <form class="form-sign" action="{% url 'users:signup' %}" method="post">
     {% csrf_token %}
     <h5 class="form-headline">🍲 계정 만들기 🐇</h5>
-    {{ form.name }}
-    {{ form.email }}
-    {{ form.password }}
-    {{ form.confirm_password }}
+    {% for field in form %}
+    <div class="form-group">
+      {{ field }}
+    </div>
     <button class="btn btn-block btn-primary">동의하고 시작하기</button>
     <a href="{% url 'users:login' %}" class="btn btn-block btn-light">로그인</a>
 
