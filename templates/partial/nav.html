@@ -5,9 +5,9 @@
         src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/logo-basic-00b7e471b721ce9db8b0758c05a84684413c8aef1ad54caa0f3fcbe7328c947f.svg">
     </a>
     <ul class="navbar-nav ml-auto">
-      {% if category %}
+      {% if category == 'car' %}
       <li class="nav-item">
-        <button class="btn-filter active" data-toggle="modal" data-target="#section-filter">
+        <button class="btn-filter {% if filtered %}active{% endif %}" data-toggle="modal" data-target="#section-filter">
           <!-- filter가 적용되어 있다면 btn-filter에 active 클레스를 추가해주세요.-->
           <i class="material-icons ic-filter">filter_list</i>
         </button>

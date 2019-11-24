@@ -45,3 +45,14 @@ class CategorizedProductView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["category"] = self.request.path.strip("/")
         return context
+
+
+class ProductDetailView(generic.DetailView):
+
+    """
+    Product Detail View
+    """
+
+    model = models.Car
+    template_name = "products/product_detail.html"
+    context_object_name = "product"
