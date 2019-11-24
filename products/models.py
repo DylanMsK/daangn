@@ -5,24 +5,7 @@ from users import models as user_models
 
 
 # Create your models here.
-class AbstractItem(base_models.TimeStampedModel):
-
-    """
-    Abatract Item
-
-    상속받은 TimeStampedModel과 같이 추후 중복적으로 필요한 필드를 정의해 다른 모델에서 상속받는다.
-    """
-
-    name: str = models.CharField("이름", max_length=80)
-
-    class meta:
-        abstract = True
-
-    def __str__(self):
-        return self.name
-
-
-class Category(AbstractItem):
+class Category(base_models.TimeStampedModel):
 
     """
     Product Category
@@ -30,9 +13,14 @@ class Category(AbstractItem):
     등록될 제품들의 카테고리를 정의
     """
 
+    name: str = models.CharField(max_length=30)
+
     class Meta:
         verbose_name = "카테고리"
         verbose_name_plural = "카테고리"
+
+    def __str__(self):
+        return self.name
 
 
 def set_FK_model_category():
@@ -40,6 +28,13 @@ def set_FK_model_category():
 
 
 class Product(base_models.TimeStampedModel):
+
+    """
+    Product 모델
+
+    모든 상품에 공통적으로 필요한 필드들을 정의
+    """
+
     user: user_models.User = models.ForeignKey(
         user_models.User,
         on_delete=models.CASCADE,
@@ -56,7 +51,7 @@ class Product(base_models.TimeStampedModel):
     )
     title: str = models.CharField("제목", max_length=120, null=False)
     price: int = models.PositiveIntegerField(
-        "가격",
+        "가격(원)",
         null=False,
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100000000)],
@@ -67,7 +62,12 @@ class Product(base_models.TimeStampedModel):
         verbose_name_plural = "상품"
 
     def __str__(self):
-        return f"{self.user} | {self.title}"
+        return f"{self.title}"
+
+    def count_images(self):
+        return self.images.count()
+
+    count_images.short_description = "이미지 갯수"
 
 
 class Image(base_models.TimeStampedModel):
@@ -85,3 +85,21 @@ class Image(base_models.TimeStampedModel):
     class Meta:
         verbose_name = "사진"
         verbose_name_plural = "사진"
+
+
+class Car(Product):
+    year: int = models.PositiveIntegerField("연식(년)", null=False)
+    driven_distance: int = models.PositiveIntegerField(
+        "주행 거리(km)",
+        null=False,
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(10000000)],
+    )
+    smoking: bool = models.BooleanField("흡연 여부", null=False, default=False)
+
+    class Meta:
+        verbose_name = "차량"
+        verbose_name_plural = "차량"
+
+    def __str__(self):
+        return self.title
