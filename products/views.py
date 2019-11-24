@@ -19,3 +19,29 @@ class HomeView(generic.ListView):
     paginate_orphans = 6
     ordering = "-created"
     context_object_name = "products"
+
+
+class CategorizedProductView(generic.ListView):
+
+    """
+    Categorized Product views
+
+    특정 카테고리의 상품 리스트를 보여주는 view
+    """
+
+    model = models.Car
+    template_name = "products/product_list.html"
+    paginate_by = 12
+    paginate_orphans = 6
+    ordering = "-created"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category = self.request.path.strip("/")
+        category_name = {"car": "차량"}
+        return models.Car.objects.filter(category__name=category_name[category])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category"] = self.request.path.strip("/")
+        return context
