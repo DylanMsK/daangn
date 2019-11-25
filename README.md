@@ -289,3 +289,86 @@ class Car(Product):
 #### 6. NoSQL
 
 NoSQL을 사용한다면 Schema를 정의할 필요가 없어 수많은 카테고리를 쉽게 저장할 수 있을것같다. 하지만 Legacy 코드상 MySQL이 사용되어 NoSQL이 아닌 RDBMS를 사용한다.
+
+
+### 3. 자동차 판매글 Seed Data 생성시 Not NULL 에러 발생
+
+```bash
+  File "/Users/dylan/.pyenv/versions/daangn-venv/lib/python3.6/site-packages/django_seed/seeder.py", line 91, in <dictcomp>
+    for field, field_format in self.field_formatters.items()
+  File "/Users/dylan/.pyenv/versions/daangn-venv/lib/python3.6/site-packages/django_seed/seeder.py", line 76, in format_field
+    return format(inserted_entities)
+  File "/Users/dylan/.pyenv/versions/daangn-venv/lib/python3.6/site-packages/django_seed/seeder.py", line 25, in func
+    raise SeederException(message)
+django_seed.exceptions.SeederException: Field products.Car.product_ptr cannot be null
+```
+Car모델에서 seed data를 생성하려고 하니 위와 같은 에러가 발생했다.
+Car모델은 Product 모델을 상속받는데 스키마를 확인해 보니 아래와 같았다.
+
+```python
+migrations.CreateModel(
+    name='Car',
+    fields=[
+        ('product_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='products.Product')),
+        ('year', models.PositiveIntegerField(verbose_name='연식(년)')),
+        ('driven_distance', models.PositiveIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10000000)], verbose_name='주행 거리(km)')),
+        ('smoking', models.BooleanField(default=False, verbose_name='흡연 여부')),
+    ],
+    options={
+        'verbose_name': '차량',
+        'verbose_name_plural': '차량',
+    },
+    bases=('products.product',),
+),
+```
+Car모델의 product필드는 Product 모델을 상속받으며 `product_ptr`이라는 포인터로 자동으로 맵핑 되었다.
+
+수동으로 Car 인스턴스를 생성할때에는 위와 같은 에러가 발생하지 않았지만 `django_seed` 모듈을 통해 대량의 seed data를 만들자 위 에러가 발생한 것을 보니 해당 모듈의 내부 코드에 문제가 있는것으로 판단된다.
+
+따라서 seed data 생성 코드를 아래와 같이 Product 인스턴스를 생성한 후 Car 인스턴스에 맵핑시켜서 해당 이슈를 해결함.
+
+```python
+def handle(self, *args, **options):
+        number = options.get("number")
+        seeder = Seed.seeder()
+        all_users = user_models.User.objects.all()
+        seeder.add_entity(
+            product_models.Product,
+            number,
+            {
+                "user": lambda x: random.choice(all_users),
+                "category": product_models.Category.objects.get(name="차량"),
+                "title": lambda x: seeder.faker.sentence(
+                    nb_words=6, variable_nb_words=True, ext_word_list=None
+                ),
+                "price": lambda x: random.randint(1, 50) * 10000000,
+                "describe": lambda x: "\n".join(
+                    seeder.faker.texts(
+                        nb_texts=10, max_nb_chars=400, ext_word_list=None
+                    )
+                ),
+            },
+        )
+        products = seeder.execute()
+        products = flatten(list(products.values()))
+        for pk in products:
+            product = product_models.Product.objects.get(pk=pk)
+            product_models.Image.objects.create(
+                product=product, image=f"/product_images/{random.randint(1, 31)}.jpg",
+            )
+            product_models.Car.objects.create(
+                product_ptr=product,
+                year=random.randint(1992, 2020),
+                driven_distance=random.randint(1000, 300000),
+                smoking=seeder.faker.boolean(),
+                created=product.created,
+                updated=datetime.now(),
+                category=product.category,
+                user=product.user,
+                title=product.title,
+                price=product.price,
+                describe=product.describe,
+            )
+
+        self.stdout.write(self.style.SUCCESS(f"{number}개의 차량 판매글이 생성되었습니다!"))
+```
