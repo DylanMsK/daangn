@@ -1,7 +1,9 @@
 from django.views import generic
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from products import models
+from django.urls import reverse_lazy
+from products import models, forms
+from users import models as user_models
 
 
 # Create your views here.
@@ -56,3 +58,16 @@ class ProductDetailView(generic.DetailView):
     model = models.Car
     template_name = "products/product_detail.html"
     context_object_name = "product"
+
+
+def register(request):
+    if not user_models.User.objects.filter(id=request.user.id).exists():
+        return redirect("products:home")
+    if request.method == "POST":
+        form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save()
+            return redirect("products:product_detail", pk=instance.id)
+    else:
+        form = forms.RegisterProductForm()
+    return render(request, "products/product_create.html", {"form": form})

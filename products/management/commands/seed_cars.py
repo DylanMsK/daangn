@@ -28,6 +28,11 @@ class Command(BaseCommand):
                     nb_words=6, variable_nb_words=True, ext_word_list=None
                 ),
                 "price": lambda x: random.randint(1, 50) * 10000000,
+                "describe": lambda x: "\n".join(
+                    seeder.faker.texts(
+                        nb_texts=10, max_nb_chars=400, ext_word_list=None
+                    )
+                ),
             },
         )
         products = seeder.execute()
@@ -48,6 +53,7 @@ class Command(BaseCommand):
                 user=product.user,
                 title=product.title,
                 price=product.price,
+                describe=product.describe,
             )
 
         self.stdout.write(self.style.SUCCESS(f"{number}개의 차량 판매글이 생성되었습니다!"))

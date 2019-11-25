@@ -56,6 +56,7 @@ class Product(base_models.TimeStampedModel):
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100000000)],
     )
+    describe: str = models.TextField("설명", null=False)
 
     class Meta:
         verbose_name = "상품"
