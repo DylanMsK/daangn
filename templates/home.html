@@ -8,7 +8,7 @@
   <h5 class="container-headline">중고 거래 제품</h5>
 
   <div class="categories-group">
-    <a href="{% url 'products:categorized_products' %}" class="btn btn-category">차량</a>
+    <a href="{% url 'products:car_list' %}" class="btn btn-category">차량</a>
     <a href="#" class="btn btn-category">인기매물</a>
     <a href="#" class="btn btn-category">가구/인테리어</a>
     <a href="#" class="btn btn-category">유아동/유아도서</a>
@@ -18,7 +18,7 @@
   <ul class="list-products row">
     {% for product in products %}
     <li class="list-products-item col-12 col-md-4 col-lg-3">
-      <a href="detail.html">
+      <a href="{% url 'products:product_detail' product.id %}">
         <div class="card">
           <div class="card-img-top"
             style="background: url('{{ product.images.first.image.url }}') no-repeat center; background-size: cover; height: 240px">
@@ -49,5 +49,4 @@
     {% endif %}
   </h5>
 </div>
-
 {% endblock content %}

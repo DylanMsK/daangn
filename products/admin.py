@@ -74,6 +74,9 @@ class ImageAdmin(admin.ModelAdmin):
 
 @admin.register(models.Car)
 class CarAdmin(admin.ModelAdmin):
+
+    inlines = (ImageInline,)
+
     list_display = (
         "title",
         "user",

@@ -71,7 +71,7 @@ class RegisterProductForm(forms.Form):
     smoking = forms.BooleanField(
         widget=forms.RadioSelect(
             choices=((True, "예, 흡연자 입니다."), (False, "아니오, 비 흡연자 입니다."),)
-        )
+        ),
     )
 
     def save(self):
@@ -95,3 +95,52 @@ class RegisterProductForm(forms.Form):
         )
         models.Image.objects.create(image=image, product=car)
         return car
+
+
+class FilterForm(forms.Form):
+    year = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "input-slider-item",
+                "id": "sliderCarModelYear",
+                "aria-describedby": "sliderCarModelYearHelp",
+            }
+        )
+    )
+    driven_distance = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "input-slider-item",
+                "id": "sliderCarMileage",
+                "aria-describedby": "sliderCarMileageHelp",
+            }
+        )
+    )
+    smoking = forms.NullBooleanField(
+        widget=forms.RadioSelect(
+            choices=(("total", "전체"), ("true", "흡연"), ("false", "비흡연"),)
+        ),
+        initial="total",
+        required=False,
+    )
+
+    def clean_year(self):
+        year = self.cleaned_data.get("year")
+        min_year, max_year = year.split(",")
+        self.cleaned_data["min_year"] = int(min_year)
+        self.cleaned_data["max_year"] = int(max_year)
+        return year
+
+    def clean_driven_distance(self):
+        driven_distance = self.cleaned_data.get("driven_distance")
+        min_driven_distance, max_driven_distance = driven_distance.split(",")
+        self.cleaned_data["min_driven_distance"] = int(min_driven_distance)
+        self.cleaned_data["max_driven_distance"] = int(max_driven_distance)
+        return driven_distance
+
+    def clean_smoking(self):
+        smoking = self.cleaned_data.get("smoking", None)
+        if smoking is not None:
+            if smoking == "true":
+                return True
+            return False
