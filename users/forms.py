@@ -41,17 +41,6 @@ class LoginForm(forms.Form):
 
 
 class SignUpForm(forms.Form):
-    name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "id": "inputName",
-                "placeholder": "이름 입력(선택)",
-            }
-        ),
-        label="이름(선택)",
-        required=True,
-    )
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={"class": "form-control", "id": "inputEmail", "placeholder": "이메일 입력"}
@@ -78,11 +67,26 @@ class SignUpForm(forms.Form):
         ),
         label="비밀번호 확인",
     )
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "id": "inputName",
+                "placeholder": "이름 입력(선택)",
+            }
+        ),
+        label="이름(선택)",
+        required=False,
+    )
 
     def clean(self):
+        name = self.cleaned_data.get("name", "")
         email = self.cleaned_data.get("email")
         password = self.cleaned_data.get("password")
         confirm_password = self.cleaned_data.get("confirm_password")
+
+        if name is None:
+            self.cleaned_data["name"] = ""
 
         if email is None:
             self.add_error("email", "이메일을 입력해 주세요.")

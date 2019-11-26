@@ -11,6 +11,16 @@ class LoginView(generic.FormView):
     form_class = forms.LoginForm
     success_url = reverse_lazy("products:home")
 
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(LoginView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(LoginView, self).post(request, *args, **kwargs)
+
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
@@ -30,6 +40,16 @@ class SignUpView(generic.FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
     success_url = reverse_lazy("users:login")
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(SignUpView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(SignUpView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.save()
