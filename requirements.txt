@@ -1,13 +1,11 @@
 appdirs==1.4.3
 attrs==19.3.0
-black==19.10b0
 Click==7.0
 Django==2.2.7
 django-mathfilters==0.4.0
 django-seed==0.1.9
 entrypoints==0.3
 Faker==2.0.4
-flake8==3.7.9
 mccabe==0.6.1
 pathspec==0.6.0
 Pillow==6.2.1
