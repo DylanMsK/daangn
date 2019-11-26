@@ -9,7 +9,17 @@ from users import forms, models
 class LoginView(generic.FormView):
     template_name = "users/login.html"
     form_class = forms.LoginForm
-    success_url = reverse_lazy("base:home")
+    success_url = reverse_lazy("products:home")
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(LoginView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(LoginView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
@@ -17,19 +27,29 @@ class LoginView(generic.FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is not None:
             login(self.request, user)
-            return redirect("base:home")
+            return redirect("products:home")
         return super().form_valid(form)
 
 
 def logout_view(request):
     logout(request)
-    return redirect("base:home")
+    return redirect("products:home")
 
 
 class SignUpView(generic.FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
-    success_url = reverse_lazy("base:home")
+    success_url = reverse_lazy("users:login")
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(SignUpView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("products:home")
+        return super(SignUpView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.save()

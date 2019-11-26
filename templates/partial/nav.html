@@ -1,12 +1,24 @@
 <nav class="navbar nav-global fixed-top navbar-expand-sm">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'base:home' %}">
+    <a class="navbar-brand" href="{% url 'products:home' %}">
       <img class="img-brand" alt="당근마켓" width="132"
         src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/logo-basic-00b7e471b721ce9db8b0758c05a84684413c8aef1ad54caa0f3fcbe7328c947f.svg">
     </a>
     <ul class="navbar-nav ml-auto">
+      {% if category == 'car' %}
       <li class="nav-item">
-        <a href="#"><i class="material-icons ic-create">create</i></a>
+        <button class="btn-filter {% if filtered %}active{% endif %}" data-toggle="modal" data-target="#section-filter">
+          <!-- filter가 적용되어 있다면 btn-filter에 active 클레스를 추가해주세요.-->
+          <i class="material-icons ic-filter">filter_list</i>
+        </button>
+      </li>
+      {% endif %}
+      <li class="nav-item">
+        {% if user.is_anonymous %}
+        <a href="{% url 'users:login' %}"><i class="material-icons ic-create">create</i></a>
+        {% else %}
+        <a href="{% url 'products:register' %}"><i class="material-icons ic-create">create</i></a>
+        {% endif %}
       </li>
       <li class="nav-item">
         {% if user.is_authenticated %}

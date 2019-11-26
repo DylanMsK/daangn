@@ -10,7 +10,11 @@
     {% for field in form %}
     <div class="form-group">
       {{ field }}
+      {% if field.errors %}
+      <span class="text-danger">{{ field.errors }}</span>
+      {% endif %}
     </div>
+    {% endfor %}
     <button class="btn btn-block btn-primary">동의하고 시작하기</button>
     <a href="{% url 'users:login' %}" class="btn btn-block btn-light">로그인</a>
 
