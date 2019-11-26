@@ -29,7 +29,7 @@ def logout_view(request):
 class SignUpView(generic.FormView):
     template_name = "users/signup.html"
     form_class = forms.SignUpForm
-    success_url = reverse_lazy("products:home")
+    success_url = reverse_lazy("users:login")
 
     def form_valid(self, form):
         form.save()
