@@ -1,5 +1,6 @@
 from django.views import generic
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.utils import timezone
 from products import models, forms
@@ -106,10 +107,8 @@ class ProductDetailView(generic.DetailView):
         return context
 
 
+@login_required(login_url="/users/login/")
 def register(request):
-    if not user_models.User.objects.filter(id=request.user.id).exists():
-        return redirect("products:home")
-
     if request.method == "POST":
         form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
