@@ -79,14 +79,19 @@
     // 판매글 작성시 차량 카테고리 선택
     $(function () {
       $('#carField').hide();
-      $('#productsCategory').change(function () {
+      $('#productsCategory').on("propertychange change keyup paste input", function () {
         if ($('#productsCategory').val() == 1) {
           $('#carField').show();
         } else {
           $('#carField').hide();
-        }
+        };
       });
     });
+    if ($('#productsCategory').val() == 1) {
+      $('#carField').show();
+    } else {
+      $('#carField').hide();
+    };
   </script>
 </body>
 
