@@ -49,17 +49,17 @@
 		</div>
 
 		<div class="form-group form-category">
-			<select id="productsCategory" class="form-control" name='categories'>
-				{% for key, val in form.categories.field.widget.choices %}
+			<select id="productsCategory" class="form-control" name='category'>
+				{% for key, val in form.category.field.widget.choices %}
 				{% if not key %}
-				<option value="{{ key }}" disabled selected>{{ val }}</option>
+				<option value="{{ key }}" disabled selected>{{key}} {{ val }}</option>
 				{% else %}
 				<option value="{{ key }}">{{ val }}</option>
 				{% endif %}
 				{% endfor %}
 			</select>
-			{% if form.categories.errors %}
-			<span class="text-danger">{{ form.categories.errors }}</span>
+			{% if form.category.errors %}
+			<span class="text-danger">{{ form.category.errors }}</span>
 			{% endif %}
 		</div>
 

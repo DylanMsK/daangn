@@ -9,10 +9,9 @@ from users import models as user_models
 
 # Create your views here.
 class HomeView(generic.ListView):
-
     """
     HomeView Definition
-    
+
     메인페이지에서 상품들의 리스트를 보여주는 view
     """
 
@@ -90,7 +89,6 @@ class CarListView(generic.View):
 
 
 class ProductDetailView(generic.DetailView):
-
     """
     Product Detail View
     """
@@ -109,8 +107,8 @@ class ProductDetailView(generic.DetailView):
 
 @login_required(login_url="/users/login/")
 def register(request):
+    form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
     if request.method == "POST":
-        form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             instance = form.save()
             if instance.category.name == "차량":
@@ -118,5 +116,5 @@ def register(request):
             else:
                 return redirect("products:home")
     else:
-        form = forms.RegisterProductForm()
+        form = forms.RegisterProductForm(user=request.user)
     return render(request, "products/product_create.html", {"form": form})
