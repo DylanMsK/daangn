@@ -41,6 +41,7 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "django_seed",
+    "mathfilters",
 ]
 PROJECT_APPS = [
     "base.apps.BaseConfig",
@@ -128,3 +129,6 @@ STATICFILES_DIR = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 MEDIA_URL = "/media/"
+
+CONTENT_TYPES = ("image",)
+MAX_UPLOAD_SIZE = 10485760  # 10MB

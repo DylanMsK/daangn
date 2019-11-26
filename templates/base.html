@@ -52,7 +52,7 @@
 
     // 차량 주행 거리 input
     var minCarMileage = 0;
-    var maxCarMileage = 1000000;
+    var maxCarMileage = 100000;
     var currentMinCarMileage = {% if min_driven_distance %}Number('{{ min_driven_distance }}'){% else %} minCarMileage{% endif %}
     var currentMaxCarMileage = {% if max_driven_distance %}Number('{{ max_driven_distance }}'){% else %} maxCarMileage{% endif %}
     $("#sliderCarMileage").slider({ min: minCarMileage, max: maxCarMileage, value: [currentMinCarMileage, currentMaxCarMileage], step: 1000, focus: true });

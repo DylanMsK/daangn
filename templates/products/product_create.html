@@ -16,6 +16,13 @@
 
 	<form class="form-item-create" action="{% url 'products:register' %}" method="post" enctype="multipart/form-data">
 		{% csrf_token %}
+
+		{% if form.non_field_errors %}
+		{% for error in form.non_field_errors %}
+		<span class="text-danger">{{error}}</span>
+		{% endfor %}
+		{% endif %}
+
 		<!-- <div class="form-group form-picture">
 			<div class="file-box">
 				<input class="upload-name" value="파일선택" disabled="disabled">
@@ -29,11 +36,18 @@
 			{{ form.image }}
 			<div class="file-box">
 			</div>
+			{% if form.image.errors %}
+			<span class="text-danger">{{ form.image.errors }}</span>
+			{% endif %}
 		</div>
 
 		<div class="form-group form-title">
 			{{ form.title }}
+			{% if form.title.errors %}
+			<p class="text-danger">{{ form.title.errors }}</p>
+			{% endif %}
 		</div>
+
 		<div class="form-group form-category">
 			<select id="productsCategory" class="form-control" name='categories'>
 				{% for key, val in form.categories.field.widget.choices %}
@@ -44,13 +58,25 @@
 				{% endif %}
 				{% endfor %}
 			</select>
+			{% if form.categories.errors %}
+			<span class="text-danger">{{ form.categories.errors }}</span>
+			{% endif %}
 		</div>
+
 		<div class="form-group form-price">
 			{{ form.price }}
+			{% if form.price.errors %}
+			<span class="text-danger">{{ form.price.errors }}</span>
+			{% endif %}
 		</div>
+
 		<div class="form-group form-description">
 			{{ form.describe }}
+			{% if form.describe.errors %}
+			<span class="text-danger">{{ form.describe.errors }}</span>
+			{% endif %}
 		</div>
+
 		<div id="carField">
 			<div class="form-group form-car-model-year">
 				<select id="carModelYear" class="form-control" name='year'>
@@ -62,10 +88,18 @@
 					{% endif %}
 					{% endfor %}
 				</select>
+				{% if form.year.errors %}
+				<span class="text-danger">{{ form.year.errors }}</span>
+				{% endif %}
 			</div>
+
 			<div class="form-group form-car-mileage">
 				{{ form.driven_distance }}
+				{% if form.driven_distance.errors %}
+				<span class="text-danger">{{ form.driven_distance.errors }}</span>
+				{% endif %}
 			</div>
+
 			<div class="form-group form-car-smoking">
 				<label>차량 판매자 흡연 여부</label>
 				{% for key, val in form.smoking.field.widget.choices %}
@@ -81,6 +115,9 @@
 				</div>
 				{% endif %}
 				{% endfor %}
+				{% if form.smoking.errors %}
+				<span class="text-danger">{{ form.smoking.errors }}</span>
+				{% endif %}
 			</div>
 		</div>
 		<button type="submit" class="btn btn-primary btn-submit">상품 등록하기</button>

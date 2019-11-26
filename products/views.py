@@ -1,8 +1,7 @@
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.urls import reverse_lazy
-from django.db.models import Max, Min
+from django.utils import timezone
 from products import models, forms
 from users import models as user_models
 
@@ -85,7 +84,6 @@ class CarListView(generic.View):
             page = request.GET.get("page", 1)
             products = paginator.get_page(page)
             context = {"form": form, "products": products}
-        print(dir(products))
         context["category"] = self.request.path.strip("/")
         return render(request, "products/product_list.html", context)
 
@@ -100,6 +98,13 @@ class ProductDetailView(generic.DetailView):
     template_name = "products/product_detail.html"
     context_object_name = "product"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        obj = self.get_object()
+        context["months"] = (timezone.now() - obj.created).days // 30
+        context["days"] = (timezone.now() - obj.created).days
+        return context
+
 
 def register(request):
     if not user_models.User.objects.filter(id=request.user.id).exists():
@@ -109,7 +114,10 @@ def register(request):
         form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             instance = form.save()
-            return redirect("products:product_detail", pk=instance.id)
+            if instance.category.name == "차량":
+                return redirect("products:product_detail", pk=instance.id)
+            else:
+                return redirect("products:home")
     else:
         form = forms.RegisterProductForm()
     return render(request, "products/product_create.html", {"form": form})
