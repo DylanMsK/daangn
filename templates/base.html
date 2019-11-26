@@ -35,11 +35,58 @@
     integrity="sha256-59/apVFrosMLFX2dHZLGvb3nPpu7e0Yx1rsDr1dTRrk=" crossorigin="anonymous"></script>
   <script>
     // With JQuery
-    $("#carYeara").slider({ min: 0, max: 10, value: 0, focus: true });
-    $("#sliderCarModelYear").slider({ min: 0, max: 10, value: [0, 10], focus: true });
+    // 차량 연식 input
+    var minCarModelYear = 1990;
+    var maxCarModelYear = 2020;
+    var currentMinCarModelYear = {% if min_year %}Number('{{ min_year }}'){% else %} minCarModelYear{% endif %}
+    var currentMaxCarModelYear = {% if max_year %}Number('{{ max_year }}'){% else %} maxCarModelYear{% endif %}
+    $("#sliderCarModelYear").slider({ min: minCarModelYear, max: maxCarModelYear, value: [currentMinCarModelYear, currentMaxCarModelYear], focus: true });
+    $(function () {
+      $('#sliderCarModelYearHelp').text(currentMinCarModelYear + '년부터 ' + currentMaxCarModelYear + '년까지');
+      $('#sliderCarModelYear').change(function () {
+        currentMinCarModelYear = $("#sliderCarModelYear")[0].value.split(',')[0];
+        currentMaxCarModelYear = $("#sliderCarModelYear")[0].value.split(',')[1];
+        $('#sliderCarModelYearHelp').text(currentMinCarModelYear + '년부터 ' + currentMaxCarModelYear + '년까지');
+      });
+    });
 
-    $("#carDistancea").slider({ min: 0, max: 10, value: 0, focus: true });
-    $("#sliderCarMileage").slider({ min: 0, max: 10, value: [0, 10], focus: true });
+    // 차량 주행 거리 input
+    var minCarMileage = 0;
+    var maxCarMileage = 100000;
+    var currentMinCarMileage = {% if min_driven_distance %}Number('{{ min_driven_distance }}'){% else %} minCarMileage{% endif %}
+    var currentMaxCarMileage = {% if max_driven_distance %}Number('{{ max_driven_distance }}'){% else %} maxCarMileage{% endif %}
+    $("#sliderCarMileage").slider({ min: minCarMileage, max: maxCarMileage, value: [currentMinCarMileage, currentMaxCarMileage], step: 1000, focus: true });
+    $(function () {
+      $('#sliderCarMileageHelp').text(currentMinCarMileage + 'km부터 ' + currentMaxCarMileage + 'km까지');
+      $('#sliderCarMileage').change(function () {
+        currentMinCarMileage = $('#sliderCarMileage')[0].value.split(',')[0];
+        currentMaxCarMileage = $('#sliderCarMileage')[0].value.split(',')[1];
+        $('#sliderCarMileageHelp').text(currentMinCarMileage + 'km부터 ' + currentMaxCarMileage + 'km까지');
+      })
+    });
+
+    // 차량 필터 초기화 버튼
+    $('#filterInitializer').click(function () {
+      $("#sliderCarModelYear").slider({ min: minCarModelYear, max: maxCarModelYear, value: [minCarModelYear, maxCarModelYear], focus: true });
+      $("#sliderCarModelYear").slider('refresh');
+      $('#sliderCarModelYearHelp').text(minCarModelYear + '년부터 ' + maxCarModelYear + '년까지');
+      $("#sliderCarMileage").slider({ min: minCarMileage, max: maxCarMileage, value: [minCarMileage, maxCarMileage], step: 1000, focus: true });
+      $("#sliderCarMileage").slider('refresh');
+      $('#sliderCarMileageHelp').text(minCarMileage + 'km부터 ' + maxCarMileage + 'km까지');
+      $('#formRadiosSmoking').attr('checked', 'checked');
+    });
+
+    // 판매글 작성시 차량 카테고리 선택
+    $(function () {
+      $('#carField').hide();
+      $('#productsCategory').change(function () {
+        if ($('#productsCategory').val() == 1) {
+          $('#carField').show();
+        } else {
+          $('#carField').hide();
+        }
+      });
+    });
   </script>
 </body>
 

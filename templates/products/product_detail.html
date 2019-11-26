@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load mathfilters %}
+
+{% block title %}당근마켓 - 중고 제품 상세!{% endblock title %}
+
+{% block content %}
+<nav class="navbar nav-global fixed-top navbar-expand-sm">
+	<div class="container">
+		<a class="navbar-brand" href="javascript:history.back()">
+			<i class="material-icons ic-filter">arrow_back_ios</i>뒤로
+		</a>
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item">
+				<a href="" class="btn btn-sm btn-warning disabled">채팅으로 거래하기</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+
+<div class="container container-sm container-detail">
+	<img src="{{ product.images.first.image.url }}" alt="" width="100%">
+	<h3 class="product-title">{{ product.title }}</h3>
+	<h4 class="product-price" style="font-weight:bold;">
+		{{ product.price|intcomma }}원
+	</h4>
+	<ul class="list-product-information">
+		<li class="list-item category">카테고리 <span>{{ product.category.name }}</span></li>
+		<li class="list-item date">상품 등록 시간 <span>{% if month %}}{ months }}개월 전{% else %}{{ days }}일 전{% endif %}</span>
+		</li>
+		<li class="list-item car-model-year">차량 연식 <span>{{ product.year|add:'-2019'|abs }}년</span></li>
+		<li class="list-item car-mileage">주행 거리 <span>{{ product.driven_distance|intcomma }}km</span></li>
+		<li class="list-item car-smoking">판매자 흡연 여부 <span>{% if product.smoking %}흡연자{% else %}비흡연자{% endif %}</span></li>
+	</ul>
+	<div class="description">
+		{{ product.describe }}
+	</div>
+</div>
+
+{% endblock content %}

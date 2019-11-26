@@ -37,9 +37,11 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
     "django_seed",
+    "mathfilters",
 ]
 PROJECT_APPS = [
     "base.apps.BaseConfig",
@@ -124,3 +126,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIR = [os.path.join(BASE_DIR, "static")]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+MEDIA_URL = "/media/"
+
+CONTENT_TYPES = ("image",)
+MAX_UPLOAD_SIZE = 10485760  # 10MB
