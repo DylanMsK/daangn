@@ -85,6 +85,7 @@ class CarListView(generic.View):
             products = paginator.get_page(page)
             context = {"form": form, "products": products}
         context["category"] = self.request.path.strip("/")
+        context["page_name"] = "차량"
         return render(request, "products/product_list.html", context)
 
 
@@ -118,3 +119,43 @@ def register(request):
     else:
         form = forms.RegisterProductForm(user=request.user)
     return render(request, "products/product_create.html", {"form": form})
+
+
+class HotListView(generic.View):
+    def get(self, request):
+        products = models.Product.objects.filter(category__id=2)
+        context = {
+            "products": products,
+            "page_name": "인기매물",
+        }
+        return render(request, "products/product_list.html", context)
+
+
+class FurnitureListView(generic.View):
+    def get(self, request):
+        products = models.Product.objects.filter(category__id=3)
+        context = {
+            "products": products,
+            "page_name": "가구/인테리어",
+        }
+        return render(request, "products/product_list.html", context)
+
+
+class ChildrenListView(generic.View):
+    def get(self, request):
+        products = models.Product.objects.filter(category__id=4)
+        context = {
+            "products": products,
+            "page_name": "유아동/유아도서",
+        }
+        return render(request, "products/product_list.html", context)
+
+
+class LifeListView(generic.View):
+    def get(self, request):
+        products = models.Product.objects.filter(category__id=2)
+        context = {
+            "products": products,
+            "page_name": "생활/가공식품",
+        }
+        return render(request, "products/product_list.html", context)
