@@ -49,11 +49,10 @@ class ProductFormTest(TestCase):
         response = self.client.get(reverse("products:register"))
         self.assertEqual(response.status_code, 200)
 
-    # 판매글 등록 시도(valid)
+    # 1. 판매글 등록 시도(valid)
     @override_settings(MEDIA_ROOT="test/")
     def test_register_valid(self):
         form = self.client.post(reverse("products:register"), self.valid_data)
-        print()
         self.assertTrue(form.is_valid())
 
 
@@ -62,10 +61,12 @@ class ProductViewTest(TestCase):
     유저가 상품 리스트를 조회하고 필터링하는 과정 테스트
     """
 
+    # 2. 차량 카테고리로 이동
     def test_products_view(self):
         response = self.client.get(reverse("products:car_list"))
         self.assertEqual(response.status_code, 200)
 
+    # 3. 차량 필터링 적용
     def test_products_filter_view(self):
         response = self.client.get(
             "/car/?year=2010,2020&driven_distance=0,100000&smoking=True"
