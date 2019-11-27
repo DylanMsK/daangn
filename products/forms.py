@@ -5,6 +5,12 @@ from products import models as product_models
 from users import models as user_models
 
 
+category_queryset = product_models.Category.objects.all()
+CATEGORY_CHOICES = [(0, "카테고리를 선택해주세요.")] + [
+    (cat.id, cat.name) for cat in category_queryset
+]
+
+
 class RegisterProductForm(forms.Form):
     image = forms.FileField(
         widget=forms.FileInput(
@@ -26,10 +32,9 @@ class RegisterProductForm(forms.Form):
         ),
         max_length=120,
     )
-    category = forms.ModelChoiceField(
-        queryset=product_models.Category.objects.all(),
+    category = forms.ChoiceField(
+        choices=CATEGORY_CHOICES,
         widget=forms.Select(attrs={"class": "form-control", "id": "productsCategory"}),
-        empty_label="카테고리를 선택해주세요.",
     )
     price = forms.IntegerField(
         widget=forms.NumberInput(
@@ -110,25 +115,24 @@ class RegisterProductForm(forms.Form):
             self.add_error("title", "제품 이름을 입력해주세요.")
 
         # 카테고리 선택 체크
-        try:
-            # 차량 카테고리 선택시 추가 필트 체크
-            if category.name == "차량":
-                if year is None:
-                    self.add_error("year", "차량 연식을 선택해주세요.")
-                else:
-                    if year < 1990 or year > 2020:
-                        self.add_error("year", "1990년에서 2020년 사이에 제작된 차량만 등록 가능합니다.")
-                if driven_distance is None:
-                    self.add_error("driven_distance", "주행거리를 입력해주세요.(km)")
-                else:
-                    if driven_distance < 0 or driven_distance > 100000:
-                        self.add_error(
-                            "driven_distance", "주행거리가 0km에서 100,000km 까지의 차량만 등록 가능합니다."
-                        )
-                if smoking is None or smoking == "":
-                    self.add_error("smoking", "흡연유무를 선택해 주세요.")
-        except product_models.Category.DoesNotExist:
+        if category is None or category == 0:
             self.add_error("category", "카테고리를 선택해주세요.")
+        else:
+            # 차량 카테고리 선택시 추가 필트 체크
+            if year is None:
+                self.add_error("year", "차량 연식을 선택해주세요.")
+            else:
+                if year < 1990 or year > 2020:
+                    self.add_error("year", "1990년에서 2020년 사이에 제작된 차량만 등록 가능합니다.")
+            if driven_distance is None:
+                self.add_error("driven_distance", "주행거리를 입력해주세요.(km)")
+            else:
+                if driven_distance < 0 or driven_distance > 100000:
+                    self.add_error(
+                        "driven_distance", "주행거리가 0km에서 100,000km 까지의 차량만 등록 가능합니다."
+                    )
+            if smoking is None or smoking == "":
+                self.add_error("smoking", "흡연유무를 선택해 주세요.")
 
         # 가격 입력 체크
         if price is None:
@@ -148,6 +152,7 @@ class RegisterProductForm(forms.Form):
         price = self.cleaned_data.get("price")
         describe = self.cleaned_data.get("describe")
 
+        category = product_models.Category.objects.get(pk=category)
         # 차량 카테고리의 판매글 저장
         if category.name == "차량":
             year = self.cleaned_data.get("year")
@@ -172,6 +177,7 @@ class RegisterProductForm(forms.Form):
                 describe=describe,
             )
         product_models.Image.objects.create(image=image, product=product)
+
         return product
 
 
