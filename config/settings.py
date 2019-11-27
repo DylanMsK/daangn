@@ -126,8 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = "/static/"
-STATICFILES_DIR = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 MEDIA_URL = "/media/"
@@ -135,8 +135,21 @@ MEDIA_URL = "/media/"
 CONTENT_TYPES = ("image",)
 MAX_UPLOAD_SIZE = 10485760  # 10MB
 
-# Heroku: Update database configuration from $DATABASE_URL.
-import dj_database_url
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES["default"].update(db_from_env)
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = "config.custom_storages.UploadStorage"
+    STATICFILES_STORAGE = "config.custom_storages.StaticStorage"
+    AWS_ACCESS_KEY_ID = "AKIA2BNHKH3VOAXJ2YTW"
+    AWS_SECRET_ACCESS_KEY = "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"
+    AWS_STORAGE_BUCKET_NAME = "daangn-dylanmsk"
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_AUTO_CREATE_BUCKET = True
+
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+
+    # Heroku: Update database configuration from $DATABASE_URL.
+    import dj_database_url
+
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES["default"].update(db_from_env)
