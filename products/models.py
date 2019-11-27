@@ -13,7 +13,7 @@ class Category(base_models.TimeStampedModel):
     등록될 제품들의 카테고리를 정의
     """
 
-    name: str = models.CharField(max_length=30)
+    name: str = models.CharField("카테고리명", max_length=30)
 
     class Meta:
         verbose_name = "카테고리"
@@ -72,6 +72,12 @@ class Product(base_models.TimeStampedModel):
 
 
 class Image(base_models.TimeStampedModel):
+    """
+    Image 모델
+
+    상품에 등록될 사진들을 저장하는 테이블
+    """
+
     image = models.ImageField(
         "사진", upload_to="product_images", default="default.png", null=False
     )
@@ -89,6 +95,12 @@ class Image(base_models.TimeStampedModel):
 
 
 class Car(Product):
+    """
+    Car 모델
+
+    차량 카테고리의 상품들을 저장하는 테이블
+    """
+
     year: int = models.PositiveIntegerField("연식(년)", null=False)
     driven_distance: int = models.PositiveIntegerField(
         "주행 거리(km)",
