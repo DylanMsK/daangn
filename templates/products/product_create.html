@@ -51,8 +51,8 @@
 		<div class="form-group form-category">
 			<select id="productsCategory" class="form-control" name='category'>
 				{% for key, val in form.category.field.widget.choices %}
-				{% if not key %}
-				<option value="{{ key }}" disabled selected>{{key}} {{ val }}</option>
+				{% if key == 0 %}
+				<option value="{{ key }}">{{ val }}</option>
 				{% else %}
 				<option value="{{ key }}">{{ val }}</option>
 				{% endif %}

@@ -110,9 +110,9 @@ def register(request):
     form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
     if request.method == "POST":
         if form.is_valid():
-            instance = form.save()
-            if instance.category.name == "차량":
-                return redirect("products:product_detail", pk=instance.id)
+            product = form.save()
+            if product.category.name == "차량":
+                return redirect("products:product_detail", pk=product.id)
             else:
                 return redirect("products:home")
     else:
