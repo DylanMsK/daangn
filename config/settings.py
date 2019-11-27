@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "d#1j*gf(bhs1$but0e0r*nyd5%ss7x@kq18o2tw!xf_aej@3ol"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -136,20 +136,19 @@ CONTENT_TYPES = ("image",)
 MAX_UPLOAD_SIZE = 10485760  # 10MB
 
 
-if not DEBUG:
-    DEFAULT_FILE_STORAGE = "config.custom_storages.UploadStorage"
-    STATICFILES_STORAGE = "config.custom_storages.StaticStorage"
-    AWS_ACCESS_KEY_ID = "AKIA2BNHKH3VOAXJ2YTW"
-    AWS_SECRET_ACCESS_KEY = "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"
-    AWS_STORAGE_BUCKET_NAME = "daangn-dylanmsk"
-    AWS_DEFAULT_ACL = "public-read"
-    AWS_AUTO_CREATE_BUCKET = True
+DEFAULT_FILE_STORAGE = "config.custom_storages.UploadStorage"
+STATICFILES_STORAGE = "config.custom_storages.StaticStorage"
+AWS_ACCESS_KEY_ID = "AKIA2BNHKH3VOAXJ2YTW"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "daangn-dylanmsk"
+AWS_DEFAULT_ACL = "public-read"
+AWS_AUTO_CREATE_BUCKET = True
 
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 
-    # Heroku: Update database configuration from $DATABASE_URL.
-    import dj_database_url
+# Heroku: Update database configuration from $DATABASE_URL.
+import dj_database_url
 
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES["default"].update(db_from_env)
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES["default"].update(db_from_env)
