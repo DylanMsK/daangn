@@ -79,7 +79,7 @@ class Image(base_models.TimeStampedModel):
     """
 
     image = models.ImageField(
-        "사진", upload_to="product_images", default="default.png", null=False
+        "사진", upload_to="product_images/", default="default.png", null=False
     )
     product: Product = models.ForeignKey(
         Product,
