@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 "title": lambda x: seeder.faker.sentence(
                     nb_words=6, variable_nb_words=True, ext_word_list=None
                 ),
-                "price": lambda x: random.randint(1, 50) * 10000000,
+                "price": lambda x: random.randint(1, 50) * 1000000,
                 "describe": lambda x: "\n".join(
                     seeder.faker.texts(
                         nb_texts=10, max_nb_chars=400, ext_word_list=None
@@ -40,7 +40,7 @@ class Command(BaseCommand):
         for pk in products:
             product = product_models.Product.objects.get(pk=pk)
             product_models.Image.objects.create(
-                product=product, image=f"/product_images/{random.randint(1, 31)}.jpg",
+                product=product, image=f"product_images/{random.randint(1, 31)}.jpg",
             )
             product_models.Car.objects.create(
                 product_ptr=product,
