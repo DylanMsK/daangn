@@ -70,18 +70,18 @@ whitenoise==4.1.4
 
 ```
 daangn/
-		...
-		users/
-				management/					# seed data 생성
-				migrations/					# 사용자 모델 schema
-				static/css/					# 사용자 로직에 관련된 페이지의 정적 파일 폴더 
-				admin.py						# 사용자 정보들을 관리하는 관리자페이지 커스터마이징
-				forms.py						# 로그인/회원가입 등 사용자 폼의 유효성 검사
-				models.py						# 사용자 모델 정의
-				tests.py						# 사용자 기능별 로직 테스트
-				urls.py							# 사용자 URL 경로
-        views.py						# 사용자 로직 컨트롤러
-		...
+    ...
+    users/
+        management/					# seed data 생성
+        migrations/					# 사용자 모델 schema
+        static/css/					# 사용자 로직에 관련된 페이지의 정적 파일 폴더 
+    admin.py						# 사용자 정보들을 관리하는 관리자페이지 커스터마이징
+    forms.py						# 로그인/회원가입 등 사용자 폼의 유효성 검사
+    models.py						# 사용자 모델 정의
+    tests.py						# 사용자 기능별 로직 테스트
+    urls.py							# 사용자 URL 경로
+    views.py						# 사용자 로직 컨트롤러
+    ...
 ```
 
 
@@ -90,18 +90,18 @@ daangn/
 
 ```
 daangn/
-		...
-		products/
-				management/					# seed data 생성
-				migrations/					# 상품 모델 schema
-				static/css/					# 상품 로직에 관련된 페이지의 정적 파일 폴더 
-				admin.py						# 상품 정보들을 관리하는 관리자페이지 커스터마이징
-				forms.py						# 판매글 작성 및 필터링 폼의 유효성 검사
-				models.py						# 상품 모델 정의
-				tests.py						# 상품 기능별 로직 테스트
-				urls.py							# 상품 URL 경로
-        views.py						# 상품 로직 컨트롤러
-		...
+    ...
+    products/
+        management/					# seed data 생성
+        migrations/					# 상품 모델 schema
+        static/css/					# 상품 로직에 관련된 페이지의 정적 파일 폴더 
+    admin.py						# 상품 정보들을 관리하는 관리자페이지 커스터마이징
+    forms.py						# 판매글 작성 및 필터링 폼의 유효성 검사
+    models.py						# 상품 모델 정의
+    tests.py						# 상품 기능별 로직 테스트
+    urls.py							# 상품 URL 경로
+    views.py						# 상품 로직 컨트롤러
+    ...
 ```
 
 
