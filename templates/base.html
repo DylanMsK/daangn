@@ -73,7 +73,7 @@
       $("#sliderCarMileage").slider({ min: minCarMileage, max: maxCarMileage, value: [minCarMileage, maxCarMileage], step: 1000, focus: true });
       $("#sliderCarMileage").slider('refresh');
       $('#sliderCarMileageHelp').text(minCarMileage + 'km부터 ' + maxCarMileage + 'km까지');
-      $('#formRadiosSmoking').attr('checked', 'checked');
+      $('#formRadiosSmoking').prop('checked', 'checked');
     });
 
     // 판매글 작성시 차량 카테고리 선택
