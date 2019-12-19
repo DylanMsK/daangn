@@ -2,6 +2,7 @@ from django import forms
 from django.template.defaultfilters import filesizeformat
 from django.conf import settings
 from products import models as product_models
+from products.validators import ProductRegisterValidator as register_validator
 from users import models as user_models
 
 
@@ -85,99 +86,27 @@ class RegisterProductForm(forms.Form):
         super(RegisterProductForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        image = self.cleaned_data.get("image")
-        title = self.cleaned_data.get("title")
-        category = self.cleaned_data.get("category")
-        price = self.cleaned_data.get("price")
-        describe = self.cleaned_data.get("describe")
-        year = self.cleaned_data.get("year")
-        driven_distance = self.cleaned_data.get("driven_distance")
-        smoking = self.cleaned_data.get("smoking")
-
-        # 로그인된 사용자 체크
-        if not user_models.User.objects.filter(id=self.user.id).exists():
-            self.add_error(None, "로그인된 사용자만 판매글을 작성할 수 있습니다.")
-
-        # 이미지 업로드 체크
-        content_type = image.content_type.split("/")[0]
-        if content_type in settings.CONTENT_TYPES:
-            if image.size > settings.MAX_UPLOAD_SIZE:
-                self.add_error(
-                    "image",
-                    "10MB 이하의 이미지만 업로드할 수 있습니다. 현재 파일 용량: %s"
-                    % filesizeformat(image.size),
-                )
+        validator = register_validator(self.user, self.cleaned_data)
+        cleaned_data, errors = validator.check()
+        if errors is not None:
+            for err in errors:
+                self.add_error(err[0], err[1])
         else:
-            self.add_error("image", "이미지 파일만 첨부할 수 있습니다.")
-
-        # 제목 입력 체크
-        if title is None:
-            self.add_error("title", "제품 이름을 입력해주세요.")
-
-        # 카테고리 선택 체크
-        if category is None or category == 0:
-            self.add_error("category", "카테고리를 선택해주세요.")
-        else:
-            # 차량 카테고리 선택시 추가 필트 체크
-            if year is None:
-                self.add_error("year", "차량 연식을 선택해주세요.")
-            else:
-                if year < 1990 or year > 2020:
-                    self.add_error("year", "1990년에서 2020년 사이에 제작된 차량만 등록 가능합니다.")
-            if driven_distance is None:
-                self.add_error("driven_distance", "주행거리를 입력해주세요.(km)")
-            else:
-                if driven_distance < 0 or driven_distance > 100000:
-                    self.add_error(
-                        "driven_distance", "주행거리가 0km에서 100,000km 까지의 차량만 등록 가능합니다."
-                    )
-            if smoking is None or smoking == "":
-                self.add_error("smoking", "흡연유무를 선택해 주세요.")
-
-        # 가격 입력 체크
-        if price is None:
-            self.add_error("price", "가격을 입력해주세요. (￦)")
-        else:
-            if price < 0 or price > 100000000:
-                self.add_error("price", "1억원 이하의 금액만 등록 가능합니다.")
-
-        # 설명 입력 체크
-        if describe is None:
-            self.add_error("describe", "제품 설명을 작성해주세요.")
+            self.cleaned_data = cleaned_data
 
     def save(self):
-        image = self.cleaned_data.get("image")
-        title = self.cleaned_data.get("title")
         category = self.cleaned_data.get("category")
-        price = self.cleaned_data.get("price")
-        describe = self.cleaned_data.get("describe")
-
-        category = product_models.Category.objects.get(pk=category)
+        image = self.cleaned_data.pop("image")
         # 차량 카테고리의 판매글 저장
         if category.name == "차량":
-            year = self.cleaned_data.get("year")
-            driven_distance = self.cleaned_data.get("driven_distance")
-            smoking = self.cleaned_data.get("smoking")
-            product = product_models.Car.objects.create(
-                user=self.user,
-                category=category,
-                title=title,
-                price=price,
-                describe=describe,
-                year=year,
-                driven_distance=driven_distance,
-                smoking=smoking,
-            )
+            product = product_models.Car.objects.create(**self.cleaned_data)
+        # 차량 이외 legacy 카테고리 만매글 저장
+        elif category.name in ["인기매물", "가구/인테리어", "유아동/유아도서", "생활/가공식품", "기타"]:
+            product = product_models.Product.objects.create(**self.cleaned_data)
         else:
-            product = product_models.Product.objects.create(
-                user=self.user,
-                category=category,
-                title=title,
-                price=price,
-                describe=describe,
-            )
-        product_models.Image.objects.create(image=image, product=product)
+            print("[forms.py] 잘못된 카테고리 등록 시도!!")
 
+        product_models.Image.objects.create(image=image, product=product)
         return product
 
 

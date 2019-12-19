@@ -31,26 +31,28 @@
 </div>
 
 <h5 align="center">
-  {% if products.has_previous %}
-  <a class="btn btn-primary" role="button" href="/cars/?page={{ products.previous_page_number }}">이전</a>
+  {% if page_obj.has_previous %}
+  <a class="btn btn-primary" role="button"
+    href="/?page={{ page_obj.previous_page_number }}{% if category %}&category={{ category }}{% endif %}">이전</a>
   {% else %}
-  <button class="btn" disabled>이전</button>
+  <button class="btn" disabled>다음</button>
   {% endif %}
 
-  {% if products %}
-  Page {{ products.number }} of {{ products.paginator.num_pages }}
+  {% if page_obj %}
+  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
   {% else %}
   Page 1 of 1
   {% endif %}
 
-  {% if products.has_next %}
-  <a class="btn btn-primary" role='button' href="/cars/?page={{ products.next_page_number }}">다음</a>
+  {% if page_obj.has_next %}
+  <a class="btn btn-primary" role="button"
+    href="/?page={{ page_obj.next_page_number }}{% if category %}&category={{ category }}{% endif %}">다음</a>
   {% else %}
   <button class="btn" disabled>다음</button>
   {% endif %}
 </h5>
 
-<form action="{% url 'products:car_list' %}" method="get">
+<form method="get">
   <div class="modal fade" id="section-filter" tabindex="-1" role="dialog" data-controller="design"
     data-action="modal_example" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-filter" role="document">

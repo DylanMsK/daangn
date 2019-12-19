@@ -17,21 +17,101 @@ class HomeView(generic.ListView):
 
     model = models.Product
     template_name = "home.html"
-    paginate_by = 12
-    paginate_orphans = 6
+    paginate_by = 12  # 페이지당 노출되는 상품 갯수
+    paginate_orphans = 6  # 마지막 페이지에 보여줄 최소 상품 갯수
     ordering = "-created"
     context_object_name = "products"
+    categories = {
+        "car": "차량",
+        "hot": "인기매물",
+        "furniture": "가구/인테리어",
+        "children": "유아동/유아도서",
+        "life": "생활/가공식품",
+        "etc": "기타",
+    }
+
+    def get_queryset(self, category=None):
+        queryset = models.Product.objects.all()
+        if category is not None:
+            for cat_eng, cat_kor in self.categories.items():
+                if cat_eng == category:
+                    queryset = queryset.filter(category__name=cat_kor)
+                    break
+            else:
+                return redirect("products:home")
+
+        ordering = self.get_ordering()
+        if ordering:
+            if isinstance(ordering, str):
+                ordering = (ordering,)
+            queryset = queryset.order_by(*ordering)
+        return queryset
+
+    def get_context_data(self, *, queryset=None, **kwargs):
+        """Get the context for this view."""
+
+        # 임시 밸리데이션
+        if queryset is None:
+            print("카테고리가 없음!!")
+            print("카테고리가 없음!!")
+            print("카테고리가 없음!!")
+
+        page_size = self.paginate_by
+        context_object_name = self.context_object_name
+        if page_size:
+            paginator, page, queryset, is_paginated = self.paginate_queryset(
+                queryset, page_size
+            )
+            context = {
+                "paginator": paginator,
+                "page_obj": page,
+                "is_paginated": is_paginated,
+            }
+        else:
+            context = {
+                "paginator": None,
+                "page_obj": None,
+                "is_paginated": False,
+            }
+        if context_object_name is not None:
+            context[context_object_name] = queryset
+        context.update(kwargs)
+        context["categories"] = self.categories
+        context["category"] = self.request.GET.get("category")
+        return context
+
+    def get(self, request, *args, **kwargs):
+        print(request.GET)
+        category = request.GET.get("category")
+        if category is None:
+            queryset = self.get_queryset()
+            context = self.get_context_data(queryset=queryset)
+            return render(request, "home.html", context)
+        else:
+            queryset = self.get_queryset(category)
+            context = self.get_context_data(queryset=queryset)
+            return render(request, "products/product_list.html", context)
 
 
-class CarListView(generic.View):
-
+class CategoryListView(generic.ListView):
     """
     Categorized Product views
 
     특정 카테고리의 상품 리스트를 보여주는 view
     """
 
-    def get(self, request):
+    def get_queryset(self):
+        categories = {
+            "car": "차량",
+        }
+        category = self.kwargs.get("category")
+        if categories.get(category):
+            return redirect("products:home")
+        queryset = models.Product.objects.filter(category_name=categories[category])
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        category = kwargs.get("category")
         form = forms.FilterForm(request.GET)
         qs = models.Car.objects.all()
         if form.is_valid():
