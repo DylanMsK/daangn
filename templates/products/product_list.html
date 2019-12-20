@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load room_list_tags %}
 
 {% block title %}당근마켓 - 우리 동네 중고거래{% endblock %}
 
 {% block content %}
 <div class="container container-categorized-index">
   <h5 class="container-headline">중고 {{ page_name }} 목록</h5>
-
   <ul class="list-products row">
     {% for product in products %}
     <li class="list-products-item col-12 col-md-4 col-lg-3">
@@ -32,10 +32,12 @@
 
 <h5 align="center">
   {% if page_obj.has_previous %}
+  {% with params=request.GET.urlencode prev_page=page_obj.previous_page_number %}
   <a class="btn btn-primary" role="button"
-    href="/?page={{ page_obj.previous_page_number }}{% if category %}&category={{ category }}{% endif %}">이전</a>
+    href="{% url 'products:category_list' category.eng_name %}{% query_params prev_page params %}">이전</a>
+  {% endwith %}
   {% else %}
-  <button class="btn" disabled>다음</button>
+  <button class="btn" disabled>이전</button>
   {% endif %}
 
   {% if page_obj %}
@@ -45,14 +47,16 @@
   {% endif %}
 
   {% if page_obj.has_next %}
+  {% with params=request.GET.urlencode nxt_page=page_obj.next_page_number %}
   <a class="btn btn-primary" role="button"
-    href="/?page={{ page_obj.next_page_number }}{% if category %}&category={{ category }}{% endif %}">다음</a>
+    href="{% url 'products:category_list' category.eng_name %}{% query_params nxt_page params %}">다음</a>
+  {% endwith %}
   {% else %}
   <button class="btn" disabled>다음</button>
   {% endif %}
 </h5>
 
-<form method="get">
+<form action="{% url 'products:category_list' category.eng_name %}" method="get">
   <div class="modal fade" id="section-filter" tabindex="-1" role="dialog" data-controller="design"
     data-action="modal_example" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-filter" role="document">
@@ -84,7 +88,7 @@
             {% if key == 'total' %}
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="radio" name="smoking" id="formRadiosSmoking" value={{ key }}
-                {% if smoking is None %}checked{% endif %}>
+                {% if smoking == 'total' %}checked{% endif %}>
               <label class="form-check-label" for="formRadiosSmoking_1">
                 {{ val }}
               </label>

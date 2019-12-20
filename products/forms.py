@@ -2,7 +2,10 @@ from django import forms
 from django.template.defaultfilters import filesizeformat
 from django.conf import settings
 from products import models as product_models
-from products.validators import ProductRegisterValidator as register_validator
+from products.validators import (
+    ProductRegisterValidator as register_validator,
+    ProductFilterValidator as filter_validator,
+)
 from users import models as user_models
 
 
@@ -137,23 +140,7 @@ class FilterForm(forms.Form):
         required=False,
     )
 
-    def clean_year(self):
-        year = self.cleaned_data.get("year")
-        min_year, max_year = year.split(",")
-        self.cleaned_data["min_year"] = int(min_year)
-        self.cleaned_data["max_year"] = int(max_year)
-        return year
-
-    def clean_driven_distance(self):
-        driven_distance = self.cleaned_data.get("driven_distance")
-        min_driven_distance, max_driven_distance = driven_distance.split(",")
-        self.cleaned_data["min_driven_distance"] = int(min_driven_distance)
-        self.cleaned_data["max_driven_distance"] = int(max_driven_distance)
-        return driven_distance
-
-    def clean_smoking(self):
-        smoking = self.cleaned_data.get("smoking", None)
-        if smoking is not None:
-            if smoking == "true":
-                return True
-            return False
+    def clean(self):
+        validator = filter_validator(self.cleaned_data)
+        self.cleaned_data = validator.check()
+        return self.cleaned_data

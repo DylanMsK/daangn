@@ -9,7 +9,7 @@
 
   <div class="categories-group">
     {% for cat_eng, cat_kor in categories.items %}
-    <a href="{% url 'products:home' %}?category={{ cat_eng }}" class="btn btn-category">{{ cat_kor }}</a>
+    <a href="{% url 'products:category_list' cat_eng %}" class="btn btn-category">{{ cat_kor }}</a>
     {% endfor %}
   </div>
 

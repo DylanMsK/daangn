@@ -101,12 +101,21 @@ class Car(Product):
     차량 카테고리의 상품들을 저장하는 테이블
     """
 
-    year: int = models.PositiveIntegerField("연식(년)", null=False)
+    MIN_YEAR = 1900
+    MIN_DRIVEN_DISTANCE = 0
+    MAX_DRIVEN_DISTANCE = 10000000
+
+    year: int = models.PositiveIntegerField(
+        "연식(년)", null=False, validators=[MinValueValidator(MIN_YEAR)]
+    )
     driven_distance: int = models.PositiveIntegerField(
         "주행 거리(km)",
         null=False,
         default=0,
-        validators=[MinValueValidator(0), MaxValueValidator(10000000)],
+        validators=[
+            MinValueValidator(MIN_DRIVEN_DISTANCE),
+            MaxValueValidator(MAX_DRIVEN_DISTANCE),
+        ],
     )
     smoking: bool = models.BooleanField("흡연 여부", null=False, default=False)
 

@@ -1,3 +1,5 @@
+import re
+from datetime import datetime
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from products import models as product_models
@@ -112,5 +114,66 @@ class ProductRegisterValidator:
 
         if category.name == "차량":
             self.car_validate()
+        # 다른 카테고리 유효성 검사
+        elif category.name == "something":
+            pass
         self.delete_wrong_fields(category)
         return self.cleaned_data, None
+
+
+class ProductFilterValidator:
+    def __init__(self, data):
+        self.data = data
+        self.cleaned_data = {}
+
+    def car_validate(self):
+        year = self.data.get("year")
+        driven_distance = self.data.get("driven_distance")
+        smoking = self.data.get("smoking")
+
+        # 연식 체크
+        default_min_year = product_models.Car.MIN_YEAR
+        default_max_year = datetime.now().year
+        if year is not None and re.match("^[\d]+,[\d]+$", year):
+            min_year, max_year = map(int, year.split(","))
+            if default_min_year <= min_year <= default_max_year:
+                self.cleaned_data["min_year"] = min_year
+            else:
+                self.cleaned_data["min_year"] = default_min_year
+
+            if default_min_year <= max_year <= default_max_year:
+                self.cleaned_data["max_year"] = max_year
+            else:
+                self.cleaned_data["max_year"] = default_max_year
+        else:
+            self.cleaned_data["min_year"] = default_min_year
+            self.cleaned_data["max_year"] = default_max_year
+
+        # 주행거리 체크
+        default_min_distance = product_models.Car.MIN_DRIVEN_DISTANCE
+        default_max_distance = product_models.Car.MAX_DRIVEN_DISTANCE
+        if driven_distance is not None and re.match("^[\d]+,[\d]+$", driven_distance):
+            min_distance, max_distance = map(int, driven_distance.split(","))
+            if default_min_distance <= min_distance <= default_max_distance:
+                self.cleaned_data["min_driven_distance"] = min_distance
+            else:
+                self.cleaned_data["min_driven_distance"] = default_min_distance
+
+            if default_min_distance <= max_distance <= default_max_distance:
+                self.cleaned_data["max_driven_distance"] = max_distance
+            else:
+                self.cleaned_data["max_driven_distance"] = default_max_distance
+
+        else:
+            self.cleaned_data["min_driven_distance"] = default_min_distance
+            self.cleaned_data["max_driven_distance"] = default_max_distance
+
+        # 흡연유무 체크
+        if smoking in ["total", True, False]:
+            self.cleaned_data["smoking"] = smoking
+        else:
+            self.cleaned_data["smoking"] = "total"
+
+    def check(self):
+        self.car_validate()
+        return self.cleaned_data
