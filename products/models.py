@@ -13,7 +13,7 @@ class Category(base_models.TimeStampedModel):
     등록될 제품들의 카테고리를 정의
     """
 
-    name: str = models.CharField("카테고리명", max_length=30)
+    name: str = models.CharField("카테고리명", db_index=True, max_length=30)
 
     class Meta:
         verbose_name = "카테고리"
@@ -106,10 +106,11 @@ class Car(Product):
     MAX_DRIVEN_DISTANCE = 10000000
 
     year: int = models.PositiveIntegerField(
-        "연식(년)", null=False, validators=[MinValueValidator(MIN_YEAR)]
+        "연식(년)", db_index=True, null=False, validators=[MinValueValidator(MIN_YEAR)],
     )
     driven_distance: int = models.PositiveIntegerField(
         "주행 거리(km)",
+        db_index=True,
         null=False,
         default=0,
         validators=[

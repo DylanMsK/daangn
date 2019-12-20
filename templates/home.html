@@ -19,7 +19,7 @@
       <a href="{% url 'products:product_detail' product.id %}">
         <div class="card">
           <div class="card-img-top"
-            style="background: url('{{ product.images.first.image.url }}') no-repeat center; background-size: cover; height: 240px">
+            style="background: url('{{ product.image.0.image.url }}') no-repeat center; background-size: cover; height: 240px">
           </div>
           <div class="card-body">
             <h5 class="title">{{ product.title|truncatewords:2 }}</h5>

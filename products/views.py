@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.db.models import Prefetch
 from products import models, forms, filters
 from users import models as user_models
 
@@ -29,10 +30,24 @@ class HomeView(generic.ListView):
     paginate_by = 12  # 페이지당 노출되는 상품 갯수
     ordering = "-created"
 
+    def get_queryset(self):
+        # queryset = models.Product.objects.all()
+        # queryset = models.Product.objects.select_related("category").all()
+        queryset = (
+            models.Product.objects.prefetch_related(
+                Prefetch("images", queryset=models.Image.objects.all(), to_attr="image")
+            )
+            .select_related("category")
+            .all()
+        )
+
+        return queryset
+
     def get_context_data(self, *, object_list=None, **kwargs):
         """Get the context for this view."""
+        queryset = self.get_queryset()
         paginator, page, queryset, is_paginated = self.paginate_queryset(
-            object_list, self.paginate_by
+            queryset, self.paginate_by
         )
         context = {
             "paginator": paginator,
@@ -45,8 +60,7 @@ class HomeView(generic.ListView):
         return context
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        context = self.get_context_data(object_list=queryset)
+        context = self.get_context_data()
         return render(request, "home.html", context)
 
 
@@ -63,11 +77,29 @@ class CategoryListView(generic.ListView):
     def get_queryset(self, category=None, filter_args=None):
         if category == "차량":
             queryset = models.Car.objects.all()
+            queryset = (
+                models.Car.objects.prefetch_related(
+                    Prefetch(
+                        "images", queryset=models.Image.objects.all(), to_attr="image"
+                    )
+                )
+                .select_related("category")
+                .all()
+            )
             if filter_args is not None:
                 filter_args = filters.ProductFilter(filter_args).car_filter()
                 queryset = queryset.filter(**filter_args)
         else:
-            queryset = models.Product.objects.all()
+            queryset = (
+                models.Product.objects.prefetch_related(
+                    Prefetch(
+                        "images", queryset=models.Image.objects.all(), to_attr="image"
+                    )
+                )
+                .select_related("category")
+                .all()
+            )
+
             for cat_eng, cat_kor in CATEGORY_DICT.items():
                 if cat_kor == category:
                     queryset = queryset.filter(category__name=cat_kor)
