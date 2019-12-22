@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load room_list_tags %}
 
 {% block title %}당근마켓 - 우리 동네 중고거래{% endblock %}
 
 {% block content %}
 <div class="container container-categorized-index">
-  <h5 class="container-headline">중고 {{ page_name }} 목록</h5>
-
+  <h5 class="container-headline">중고 {{ category.kor_name }} 목록</h5>
   <ul class="list-products row">
     {% for product in products %}
     <li class="list-products-item col-12 col-md-4 col-lg-3">
       <a href="{% url 'products:product_detail' product.id %}">
         <div class="card">
           <div class="card-img-top"
-            style="background: url('{{ product.images.first.image.url }}') no-repeat center; background-size: cover; height: 240px">
+            style="background: url('{{ product.image.0.image.url }}') no-repeat center; background-size: cover; height: 240px">
           </div>
           <div class="card-body">
             <h5 class="title">{{ product.title|truncatewords:2 }}</h5>
@@ -31,26 +31,32 @@
 </div>
 
 <h5 align="center">
-  {% if products.has_previous %}
-  <a class="btn btn-primary" role="button" href="/cars/?page={{ products.previous_page_number }}">이전</a>
+  {% if page_obj.has_previous %}
+  {% with params=request.GET.urlencode prev_page=page_obj.previous_page_number %}
+  <a class="btn btn-primary" role="button"
+    href="{% url 'products:category_list' category.eng_name %}{% query_params prev_page params %}">이전</a>
+  {% endwith %}
   {% else %}
   <button class="btn" disabled>이전</button>
   {% endif %}
 
-  {% if products %}
-  Page {{ products.number }} of {{ products.paginator.num_pages }}
+  {% if page_obj %}
+  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
   {% else %}
   Page 1 of 1
   {% endif %}
 
-  {% if products.has_next %}
-  <a class="btn btn-primary" role='button' href="/cars/?page={{ products.next_page_number }}">다음</a>
+  {% if page_obj.has_next %}
+  {% with params=request.GET.urlencode nxt_page=page_obj.next_page_number %}
+  <a class="btn btn-primary" role="button"
+    href="{% url 'products:category_list' category.eng_name %}{% query_params nxt_page params %}">다음</a>
+  {% endwith %}
   {% else %}
   <button class="btn" disabled>다음</button>
   {% endif %}
 </h5>
 
-<form action="{% url 'products:car_list' %}" method="get">
+<form action="{% url 'products:category_list' category.eng_name %}" method="get">
   <div class="modal fade" id="section-filter" tabindex="-1" role="dialog" data-controller="design"
     data-action="modal_example" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-filter" role="document">
@@ -82,7 +88,7 @@
             {% if key == 'total' %}
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="radio" name="smoking" id="formRadiosSmoking" value={{ key }}
-                {% if smoking is None %}checked{% endif %}>
+                {% if smoking == 'total' %}checked{% endif %}>
               <label class="form-check-label" for="formRadiosSmoking_1">
                 {{ val }}
               </label>
