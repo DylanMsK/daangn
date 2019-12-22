@@ -8,11 +8,9 @@
   <h5 class="container-headline">중고 거래 제품</h5>
 
   <div class="categories-group">
-    <a href="{% url 'products:car_list' %}" class="btn btn-category">차량</a>
-    <a href="#" class="btn btn-category">인기매물</a>
-    <a href="#" class="btn btn-category">가구/인테리어</a>
-    <a href="#" class="btn btn-category">유아동/유아도서</a>
-    <a href="#" class="btn btn-category">생활/가공식품</a>
+    {% for cat_eng, cat_kor in categories.items %}
+    <a href="{% url 'products:category_list' cat_eng %}" class="btn btn-category">{{ cat_kor }}</a>
+    {% endfor %}
   </div>
 
   <ul class="list-products row">
@@ -21,7 +19,7 @@
       <a href="{% url 'products:product_detail' product.id %}">
         <div class="card">
           <div class="card-img-top"
-            style="background: url('{{ product.images.first.image.url }}') no-repeat center; background-size: cover; height: 240px">
+            style="background: url('{{ product.image.0.image.url }}') no-repeat center; background-size: cover; height: 240px">
           </div>
           <div class="card-body">
             <h5 class="title">{{ product.title|truncatewords:2 }}</h5>
@@ -37,15 +35,23 @@
     {% endfor %}
   </ul>
 
-  <h5>
+  <h5 align="center">
     {% if page_obj.has_previous %}
-    <a href="/?page={{ page_obj.previous_page_number }}">Previous</a>
+    <a class="btn btn-primary" role="button" href="/?page={{ page_obj.previous_page_number }}">이전</a>
+    {% else %}
+    <button class="btn" disabled>다음</button>
     {% endif %}
 
+    {% if page_obj %}
     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% else %}
+    Page 1 of 1
+    {% endif %}
 
     {% if page_obj.has_next %}
-    <a href="/?page={{ page_obj.next_page_number }}">Next</a>
+    <a class="btn btn-primary" role="button" href="/?page={{ page_obj.next_page_number }}">다음</a>
+    {% else %}
+    <button class="btn" disabled>다음</button>
     {% endif %}
   </h5>
 </div>

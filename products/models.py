@@ -13,7 +13,7 @@ class Category(base_models.TimeStampedModel):
     등록될 제품들의 카테고리를 정의
     """
 
-    name: str = models.CharField(max_length=30)
+    name: str = models.CharField("카테고리명", db_index=True, max_length=30)
 
     class Meta:
         verbose_name = "카테고리"
@@ -72,8 +72,14 @@ class Product(base_models.TimeStampedModel):
 
 
 class Image(base_models.TimeStampedModel):
+    """
+    Image 모델
+
+    상품에 등록될 사진들을 저장하는 테이블
+    """
+
     image = models.ImageField(
-        "사진", upload_to="product_images", default="default.png", null=False
+        "사진", upload_to="product_images/", default="default.png", null=False
     )
     product: Product = models.ForeignKey(
         Product,
@@ -89,12 +95,28 @@ class Image(base_models.TimeStampedModel):
 
 
 class Car(Product):
-    year: int = models.PositiveIntegerField("연식(년)", null=False)
+    """
+    Car 모델
+
+    차량 카테고리의 상품들을 저장하는 테이블
+    """
+
+    MIN_YEAR = 1900
+    MIN_DRIVEN_DISTANCE = 0
+    MAX_DRIVEN_DISTANCE = 10000000
+
+    year: int = models.PositiveIntegerField(
+        "연식(년)", db_index=True, null=False, validators=[MinValueValidator(MIN_YEAR)],
+    )
     driven_distance: int = models.PositiveIntegerField(
         "주행 거리(km)",
+        db_index=True,
         null=False,
         default=0,
-        validators=[MinValueValidator(0), MaxValueValidator(10000000)],
+        validators=[
+            MinValueValidator(MIN_DRIVEN_DISTANCE),
+            MaxValueValidator(MAX_DRIVEN_DISTANCE),
+        ],
     )
     smoking: bool = models.BooleanField("흡연 여부", null=False, default=False)
 
