@@ -196,10 +196,7 @@ def register(request):
     if request.method == "POST":
         if form.is_valid():
             product = form.save()
-            if product.category.name == "차량":
-                return redirect("products:product_detail", pk=product.id)
-            else:
-                return redirect("products:home")
+            return redirect("products:product_detail", pk=product.id)
     else:
         form = forms.RegisterProductForm(user=request.user)
     return render(request, "products/product_create.html", {"form": form})
