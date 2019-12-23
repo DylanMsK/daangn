@@ -13,7 +13,9 @@ class Category(base_models.TimeStampedModel):
     등록될 제품들의 카테고리를 정의
     """
 
-    name: str = models.CharField("카테고리명", db_index=True, max_length=30)
+    name: str = models.CharField(
+        "카테고리명", db_index=True, null=False, unique=True, max_length=30
+    )
 
     class Meta:
         verbose_name = "카테고리"
