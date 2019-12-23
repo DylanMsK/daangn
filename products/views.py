@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.http import Http404
 from django.db.models import Prefetch
 from products import models, forms, filters
 from users import models as user_models
@@ -155,12 +156,18 @@ class ProductDetailView(generic.DetailView):
     Product Detail View
     """
 
-    model = models.Product
+    # model = models.Product
     template_name = "products/product_detail.html"
     context_object_name = "product"
 
     def get_queryset(self):
-        queryset = self.model._default_manager.all()
+        queryset = (
+            models.Product.objects.prefetch_related(
+                Prefetch("images", queryset=models.Image.objects.all(), to_attr="image")
+            )
+            .select_related("category")
+            .all()
+        )
         return queryset
 
     def get_object(self, pk):
@@ -170,7 +177,7 @@ class ProductDetailView(generic.DetailView):
             try:
                 product = models.Car.objects.get(product_ptr=product)
             except models.Car.DoesNotExists:
-                return render(self.request, "404.html")
+                return Http404()
         return product
 
     def get_context_data(self, **kwargs):
@@ -192,11 +199,13 @@ class ProductDetailView(generic.DetailView):
 
 @login_required(login_url="/users/login/")
 def register(request):
-    form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
     if request.method == "POST":
+        form = forms.RegisterProductForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             product = form.save()
             return redirect("products:product_detail", pk=product.id)
-    else:
+    elif request.method == "GET":
         form = forms.RegisterProductForm(user=request.user)
-    return render(request, "products/product_create.html", {"form": form})
+        return render(request, "products/product_create.html", {"form": form})
+    else:
+        return redirect("products:home")
