@@ -24,7 +24,7 @@
 
 ### 프론트엔드
 
-##### 1. 서버로부터 받은 에러(5xx, 4xx 등)에 대해 처리를 하는가?
+##### 1. 서버로부터 받은 에러(5xx, 4xx 등)에 대해 처리를 하는가?(6.3/10)
 
 django.conf.ulrs 모듈에 내장되어 있는 함수를 오버라이드 해서 에러 핸들링을 적용.
 
@@ -54,7 +54,7 @@ def error500(request):
 
 ### 백엔드
 
-##### 2. 보안에 취약한 쿼리(예: SQL Injection)가 발생하지 않도록 처리를 하는가? 
+##### 2. 보안에 취약한 쿼리(예: SQL Injection)가 발생하지 않도록 처리를 하는가?(2.5/5)
 
 DB 조회와 생성 등의 쿼리가 발생하는 모든곳에 SQL Injection을 고려합니다.
 
@@ -73,22 +73,22 @@ CATEGORY_DICT = {
 }
 
 def get(self, request, *args, **kwargs):
-  category = CATEGORY_DICT.get(kwargs.get("category"))
-  if category is None:
-    return redirect("products:home")
-  else:
-    form = forms.FilterForm(request.GET)
-    if form.is_valid():
-      queryset = self.get_queryset(
-        category=category, filter_args=form.cleaned_data
-      )
-      context = self.get_context_data(object_list=queryset)
-      else:
-        queryset = self.get_queryset(category)
-        context = self.get_context_data(object_list=queryset)
-        context["form"] = form
-        context.update(**form.cleaned_data)
-        return render(request, "products/product_list.html", context)
+    category = CATEGORY_DICT.get(kwargs.get("category"))
+    if category is None:
+        return redirect("products:home")
+    else:
+        form = forms.FilterForm(request.GET)
+        if form.is_valid():
+            queryset = self.get_queryset(
+              category=category, filter_args=form.cleaned_data
+            )
+            context = self.get_context_data(object_list=queryset)
+        else:
+            queryset = self.get_queryset(category)
+            context = self.get_context_data(object_list=queryset)
+            context["form"] = form
+            context.update(**form.cleaned_data)
+            return render(request, "products/product_list.html", context)
 ```
 
 
@@ -103,18 +103,18 @@ CAR_FIELDS = ["year", "driven_distance", "smoking"]
 LEGACY_FIELDS = []
 
 def delete_wrong_fields(self, category):
-  if category.name == "차량":
-    for field in self.GENERAL_FIELDS + self.CAR_FIELDS:
-      self.cleaned_data[field] = self.data[field]
+    if category.name == "차량":
+        for field in self.GENERAL_FIELDS + self.CAR_FIELDS:
+            self.cleaned_data[field] = self.data[field]
 
-      else:
+    else:
         for field in self.GENERAL_FIELDS + self.LEGACY_FIELDS:
-          self.cleaned_data[field] = self.data[field]
+            self.cleaned_data[field] = self.data[field]
 ```
 
 
 
-##### 3. RESTful하게 URI와 method를 사용하고 있는가?
+##### 3. RESTful하게 URI와 method를 사용하고 있는가?(5/20)
 
 상품을 조회하고 생성하는 URL을 직관적으로 변경하고 HTTP 메소드별 CRUD 로직을 적용
 
@@ -214,7 +214,7 @@ def get_queryset(self):
 
 ### 데이터베이스
 
-##### 5. 성능을 고려하여 인덱스를 추가했는가?
+##### 5. 성능을 고려하여 인덱스를 추가했는가?(0/20)
 
 카테고리 테이블의 **카테고리 이름** 필드와 **차량 연식**, **차량 주행거리** 필드에 추가적인 인덱스를 주었습니다. 명세에는 차량 이외의 카테고리에 대한 필터링 조건은 없었기 때문에 차량 테이블에만 인덱스를 주었습니다.
 
@@ -249,7 +249,7 @@ COMMIT;
 
 
 
-##### 6. column의 속성(예: nullable) 및 constraint(예: unique)을 지정했는가?
+##### 6. column의 속성(예: nullable) 및 constraint(예: unique)을 지정했는가?(7.5/10)
 
 `Category` 테이블의 카테고리 이름 필드에 null, unique 옵션을 주었습니다.
 
@@ -264,7 +264,7 @@ class Category(base_models.TimeStampedModel):
 
 ### 기타
 
-##### 7. 중복된 코드를 모듈/파일로 분리하여 처리를 하는가?
+##### 7. 중복된 코드를 모듈/파일로 분리하여 처리를 하는가?(2.5/10)
 
 사용자가 입력한 **폼을 validation하는 로직을 별도 묘듈로 분리**하였습니다. 상품 카테고리 **필터링 조건 또한 별도 모듈로 분리**해였고 **추후 확장 가능성을 고려해 필터링 클래스를 작성**했습니다.
 
@@ -505,7 +505,7 @@ class ProductFilter:
 
 
 
-##### 8. 하드코딩 없이 확장성을 고려하여 구현했는가?
+##### 8. 하드코딩 없이 확장성을 고려하여 구현했는가?(5/10)
 
 카테고리별로 별도 컨트롤러를 만든 이전의 코드를 하나로 통합해 모든 카테고리별 리스트를 조회하는 하나의 컨트롤러로 구현했습니다. 또한 확장성을 고려해 카테고리별 필터링 조건을 별도 모듈로 분리했습니다.
 
