@@ -174,7 +174,7 @@ def get_queryset(self):
     return queryset
 ```
 
-![수정 전](/Users/dylan/Desktop/github/daangn/readme/img/수정 전.png)
+![수정 전](/readme/img/%EC%88%98%EC%A0%95%20%EC%A0%84.png)
 
 
 
@@ -188,7 +188,7 @@ def get_queryset(self):
     return queryset
 ```
 
-![카테고리 조인](/Users/dylan/Desktop/github/daangn/readme/img/카테고리 조인.png)
+![카테고리 조인](/readme/img/%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC%20%EC%A1%B0%EC%9D%B8.png)
 
 
 
@@ -208,7 +208,7 @@ def get_queryset(self):
   return queryset
 ```
 
-![이미지 조인](/Users/dylan/Desktop/github/daangn/readme/img/이미지 조인.png)
+![이미지 조인](/readme/img/%EC%9D%B4%EB%AF%B8%EC%A7%80%20%EC%A1%B0%EC%9D%B8.png)
 
 
 
